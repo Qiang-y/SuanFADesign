@@ -1,0 +1,38 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "label": "CMake: configure",
+        "type": "shell",
+        "command": "cmake",
+        "args": [
+          "-D CMAKE_C_COMPILER=D:/MinGW/mingw64/bin/gcc.exe",
+          "-D CMAKE_CXX_COMPILER=D:/MinGW/mingw64/bin/g++.exe",
+          "-G", "MinGW Makefiles",
+          ".."
+        ],
+        "options": {
+          "cwd": "${workspaceFolder}/build"
+        },
+        "group": "build",
+        "problemMatcher": ["$gcc"],
+        "detail": "Generated task by CMake Tools extension"
+      },
+      {
+        "label": "CMake: build",
+        "type": "shell",
+        "command": "cmake",
+        "args": [
+          "--build", "."
+        ],
+        "options": {
+          "cwd": "${workspaceFolder}/build"
+        },
+        "group": "build",
+        "problemMatcher": ["$gcc"],
+        "dependsOn": "CMake: configure",
+        "detail": "Generated task by CMake Tools extension"
+      }
+    ]
+  }
+  
