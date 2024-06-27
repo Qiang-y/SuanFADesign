@@ -2,6 +2,13 @@ import streamlit as st
 import matplotlib.pyplot as plt
 import time
 
+# 判断数组是否是递增有序的
+def is_increasing(arr):
+    for i in range(len(arr) - 2):
+        if arr[i] > arr[i + 1]:
+            return False
+    return True
+
 # 二分查找函数，带堆栈变化记录
 def binary_search_recursive(arr, target, low, high, stack_frames, depth=0):
     if low > high:
@@ -60,6 +67,8 @@ target = st.number_input("目标值：", min_value=1)
 
 # 将用户输入转换为列表
 arr = list(map(int, arr.split(',')))
+if is_increasing(arr) == False:
+    st.error(f"查找列表并不单调递增，无法进行二分查找")
 
 if st.button("开始二分查找："):
     stack_frames = []
