@@ -11,7 +11,8 @@ TuringMachine :: TuringMachine(std::vector<int> input){
 }
 
 void TuringMachine::display(){
-    system("clear");
+    // system("clear");
+    system("cls");
     std::cout << "steps: " << steps++ << std::endl;
     std::cout << "grids: " << work_tape.size() << std::endl;
     std::cout << std::endl << std::endl;

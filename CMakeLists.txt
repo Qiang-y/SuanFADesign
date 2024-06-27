@@ -10,5 +10,7 @@ include_directories(${CMAKE_SOURCE_DIR}/include)
 aux_source_directory(${CMAKE_SOURCE_DIR}/src SRC)
 set(CMAKE_BUILD_TYPE Debug)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
+set(CMAKE_CXX_STANDARD 11)      #设置标准
+set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 add_executable(out ${SRC})
