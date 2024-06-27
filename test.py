@@ -68,7 +68,7 @@ if st.button("开始二分查找："):
     if result != -1:
         st.success(f"目标值 {target} 的下标为: {result}")
     else:
-        st.error(f"目标值 {target} 为在此列表中找到")
+        st.error(f"目标值 {target} 未在此列表中找到")
 
     st.subheader("二分查找过程中栈的变化：")
     visualize_stack_changes(stack_frames)
