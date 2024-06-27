@@ -46,29 +46,29 @@ def visualize_stack_changes(stack_frames):
         ax.set_yticklabels(reversed(y_labels))
         ax.set_xticks([])
         ax.set_ylim(-1, len(stack) + 1)
-        ax.set_title("Stack Changes in Binary Search")
+        ax.set_title("Stack")
 
         st.pyplot(fig)
         time.sleep(0.5)  # 模拟操作延迟
 
 # Streamlit 界面
-st.title("Binary Search Visualization")
+st.title("二分查找仿真演示")
 
 # 用户输入
-arr = st.text_input("Enter a sorted array (comma-separated)", "1,3,5,7,9,11,13,15,17,19")
-target = st.number_input("Enter the target value", min_value=1)
+arr = st.text_input("查找列表：", "1,3,5,7,9,11,13,15,17,19")
+target = st.number_input("目标值：", min_value=1)
 
 # 将用户输入转换为列表
 arr = list(map(int, arr.split(',')))
 
-if st.button("Start Binary Search"):
+if st.button("开始二分查找："):
     stack_frames = []
     result = binary_search_recursive(arr, target, 0, len(arr) - 1, stack_frames)
 
     if result != -1:
-        st.success(f"Target value {target} found at index: {result}")
+        st.success(f"目标值 {target} 的下标为: {result}")
     else:
-        st.error(f"Target value {target} not found in the array")
+        st.error(f"目标值 {target} 为在此列表中找到")
 
-    st.subheader("Stack Changes During Binary Search")
+    st.subheader("二分查找过程中栈的变化：")
     visualize_stack_changes(stack_frames)
