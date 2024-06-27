@@ -11,8 +11,7 @@ TuringMachine :: TuringMachine(std::vector<int> input){
 }
 
 void TuringMachine::display(){
-    // system("clear");
-    system("cls");
+    system("clear");
     std::cout << "steps: " << steps++ << std::endl;
     std::cout << "grids: " << work_tape.size() << std::endl;
     std::cout << std::endl << std::endl;
@@ -90,7 +89,6 @@ void TuringMachine::compareLow(){
     this->cur_state = "compareLow";
     if(work_tape[0] > work_tape[1]){    //low > high
         next_state = "stop";
-        output_tape.push_back(-1);
         display();
         stop();
     }
@@ -121,6 +119,7 @@ void TuringMachine::compareHigh(){
 void TuringMachine::stop(){
     this->cur_state = "stop";
     this->next_state = "";
+    output_tape.push_back(-1);
     display();
     return;
 }
@@ -170,6 +169,7 @@ void TuringMachine::compareMid(){
 
 void TuringMachine::success(){
     this->cur_state = "success";
+    this->next_state = "";
     output_tape.push_back(work_tape[2]);
     display();
     return;
