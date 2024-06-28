@@ -5,7 +5,8 @@ TuringMachine :: TuringMachine(std::vector<int> input){
     input_ptr = 0;
     work_ptr = 0;
     shift_tape = "input tape";
-    read_data = -1;
+    read_data = "";
+    write_data = "";
     steps = 0;
     shifts = 0;
     display();
@@ -13,7 +14,7 @@ TuringMachine :: TuringMachine(std::vector<int> input){
 }
 
 void TuringMachine::display(){
-    system("cls");
+    system("clear");
     std::string direction = (dirc == 0) ? "L" : "R";
     std::cout << "steps: " << steps++ << std::endl;
     std::cout << "grids: " << work_tape.size() << std::endl;
@@ -27,6 +28,7 @@ void TuringMachine::display(){
     std::cout << "cur state: " << cur_state << std::endl;
     std::cout << "next state: " << next_state << std::endl;
     std::cout << "read_data: " << read_data << std::endl;
+    std::cout << "write_data: " << write_data << std::endl;
     std::cout << "input tape: " << std::endl;
     display_tape(input_tape, input_ptr); 
     std::cout << "work tape: " << std::endl;
@@ -69,8 +71,10 @@ void TuringMachine::initLow(){
     shift_tape = "input tape";
     shifts = R;
     dirc =  1;
+    read_data = std::to_string(input_tape[input_ptr]);
+    write_data = read_data;
     display();
-    read_data = input_tape[input_ptr++];    //读取low，然后右移一格
+    ++input_ptr;    //读取low，然后右移一格
     writeLow();
     return;
 }
@@ -81,9 +85,11 @@ void TuringMachine::writeLow(){
     shift_tape = "work tape";
     shifts = 1;
     dirc = R;
+    read_data = "";
+    write_data = std::to_string(input_tape[0]);
     display();
     ++work_ptr; //右移一格
-    work_tape.push_back(read_data);     //写入low
+    work_tape.push_back(input_tape[0]);     //写入low
     initHigh();
     return;
 }
@@ -94,8 +100,10 @@ void TuringMachine::initHigh(){
     shifts = 1;
     dirc = R;
     shift_tape = "input tape";
+    read_data = std::to_string(input_tape[input_ptr]);
+    write_data = read_data;
     display();
-    read_data = input_tape[input_ptr++];    //读取high，然后右移一格
+    ++input_ptr;    //读取high，然后右移一格
     writeHigh();
     return;
 }
@@ -106,15 +114,19 @@ void TuringMachine::writeHigh(){
     shifts = 1;
     dirc = L;
     shift_tape = "work tape";
+    read_data = "";
+    write_data = std::to_string(input_tape[1]);
     display();
     --work_ptr; //左移一格
-    work_tape.push_back(read_data);     //写入high
+    work_tape.push_back(input_tape[1]);     //写入high
     compareLow();
     return;
 }
 
 void TuringMachine::compareLow(){
     this->cur_state = "compareLow";
+    read_data = std::to_string(work_tape[work_ptr]);
+    write_data = read_data;
     if(work_tape[0] > work_tape[1]){    //low > high
         next_state = "stop";
         shifts = 0;
@@ -137,6 +149,8 @@ void TuringMachine::compareLow(){
 
 void TuringMachine::compareHigh(){
     this->cur_state = "compareHigh";
+    read_data = std::to_string(work_tape[work_ptr]);
+    write_data = read_data;
     if(work_tape[0] <= work_tape[1]){
         this->next_state = "callMid";
         shifts = 0;
@@ -157,6 +171,8 @@ void TuringMachine::compareHigh(){
 void TuringMachine::stop(){
     this->cur_state = "stop";
     this->next_state = "";
+    read_data = "";
+    write_data = std::to_string(-1);
     display();
     output_tape.push_back(-1);
     display();
@@ -167,6 +183,9 @@ void TuringMachine::callMid(){
     this->cur_state = "callMid";
     this->next_state = "readMid";
     int mid = (work_tape[0] + work_tape[1]) / 2;
+    if(work_tape.size() < 3) read_data = "";
+    else read_data = std::to_string(work_tape[2]);
+    write_data = std::to_string(mid);
     shifts = mid + 3 - input_ptr;
     shift_tape = "input tape";
     dirc = R;
@@ -183,9 +202,10 @@ void TuringMachine::readMid(){
     shifts = work_tape[2] + 1;
     shift_tape = "input tape";
     dirc = L;
+    read_data = std::to_string(input_tape[input_ptr]);  //读取input_tape[mid]
+    write_data = read_data;
     display();
     input_ptr = work_tape[2] + 3;  //移至input_tape[mid]
-    read_data = input_tape[input_ptr];  //读取input_tape[mid]
     input_ptr = 2;
     compareMid();
     return;
@@ -193,6 +213,8 @@ void TuringMachine::readMid(){
 
 void TuringMachine::compareMid(){
     this->cur_state = "compareMid";
+    read_data = std::to_string(work_tape[2]);
+    write_data = std::to_string(work_tape[2]);
     if(input_tape[work_tape[2] + 3] == input_tape[input_ptr]){
         this->next_state = "success";
         shifts = 0;
@@ -227,6 +249,8 @@ void TuringMachine::success(){
     this->next_state = "";
     shifts = 0;
     dirc = 2;
+    read_data = "";
+    write_data = std::to_string(work_tape[2]);
     display();
     output_tape.push_back(work_tape[2]);
     display();
@@ -238,6 +262,8 @@ void TuringMachine::updateLow(){
     this->next_state = "compareHigh"; 
     shifts = R;
     dirc = 1;
+    read_data = std::to_string(work_tape[0]);
+    write_data = std::to_string(work_tape[2] + 1);
     display();
     work_tape[work_ptr++] = work_tape[2] + 1; //更新low,并右移一格
     compareHigh();
@@ -249,6 +275,8 @@ void TuringMachine::updateHigh(){
     this->next_state = "compareLow"; 
     shifts = 1;
     dirc = L;
+    read_data = std::to_string(work_tape[1]);
+    write_data = std::to_string(work_tape[2] - 1);
     display();
     work_tape[work_ptr--] = work_tape[2] - 1; //更新high,并左移一格
     compareLow();

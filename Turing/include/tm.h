@@ -32,7 +32,8 @@ private:
     std::vector<int> output_tape;       //图灵机输出的纸带
     int input_ptr;  //input_tape的读写头
     int work_ptr; //work_tape的读写头
-    int read_data;
+    std::string read_data;
+    std::string write_data;
     int steps;    //图灵机状态转换的次数
     int shifts;     //读写头左移/右移的方格数
     int dirc;   //纸带移动的方向(0 代表 L， 1 代表 R)
