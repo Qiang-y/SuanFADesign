@@ -57,6 +57,7 @@ def solve(i, remaining_capacity, current_stack_depth):
 
 # 计算结果
 max_value = solve(n - 1, capacity, 0)
+dp_snapshots.append([row[:] for row in dp])
 # st.text(stack_snapshots)  # 调试
 
 # 添加剩余的出栈操作
