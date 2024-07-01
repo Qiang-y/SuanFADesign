@@ -3,86 +3,86 @@
 #include <iostream>
 #include <cstring>
 using namespace std;
-int capacity, num,num0;  // ±³°üÈİÁ¿ºÍÎïÆ·ÊıÁ¿
-int readx=-1;//readµÄÖµ
+int capacity, num,num0;  // èƒŒåŒ…å®¹é‡å’Œç‰©å“æ•°é‡
+int readx=-1;//readçš„å€¼
 int j = 0, i = 1;
 int ans0= 0;
 int writetape[40] = { -1 }; int writetapeindex = 0; int cmpx = 39;
 int write_anstape[40]; int write_anstapeindex = 0;
 int step = 0;
-int temp = 0;//clamÖµ
+int temp = 0;//clamå€¼
 bool ifcla = false;
-int weight[10], value[10];  // ´æ´¢Ã¿¸öÎïÆ·µÄÖØÁ¿ºÍ¼ÛÖµ
-int M[10][100];  // ´æ´¢¶¯Ì¬¹æ»®µÄ×îÓÅ½â¾ØÕó
+int weight[10], value[10];  // å­˜å‚¨æ¯ä¸ªç‰©å“çš„é‡é‡å’Œä»·å€¼
+int M[10][100];  // å­˜å‚¨åŠ¨æ€è§„åˆ’çš„æœ€ä¼˜è§£çŸ©é˜µ
 string state[100] = { "readCapacity"," readNum","readWeight","readValue","writeM","readM","calM","cmp","ansM",
 "cmpAnsM","writeAns"," readAns","success "
 };
-int ans[100];  // ½âÏòÁ¿£¬´æ´¢×îÖÕÑ¡ÔñµÄÎïÆ·±àºÅ
-// ×Ô¶¯»ú×´Ì¬¶¨Òå
+int ans[100];  // è§£å‘é‡ï¼Œå­˜å‚¨æœ€ç»ˆé€‰æ‹©çš„ç‰©å“ç¼–å·
+// è‡ªåŠ¨æœºçŠ¶æ€å®šä¹‰
 enum State {
-    readCapacity,  // ¶ÁÈ¡±³°üÈİÁ¿
-    readNum,       // ¶ÁÈ¡ÎïÆ·ÊıÁ¿
-    readWeight,    // ¶ÁÈ¡ÎïÆ·ÖØÁ¿
-    readValue,     // ¶ÁÈ¡ÎïÆ·¼ÛÖµ
-    writeM,        // Ğ´Èë×îÓÅ½â¾ØÕó
-    readM,         // ¶ÁÈ¡×îÓÅ½â¾ØÕó
-    calM,          // ¼ÆËã×îÓÅ½â¾ØÕó
-    cmp,           // ±È½Ï×îÓÅ½â¾ØÕó
-    ansM,          // ¶ÁÈ¡×îÓÅ½â²¢Ğ´Èë½âÏòÁ¿
-    cmpAnsM,       // ±È½Ï½âÏòÁ¿ºÍ×îÓÅ½â¾ØÕó
-    writeAns,      // Ğ´Èë½âÏòÁ¿
+    readCapacity,  // è¯»å–èƒŒåŒ…å®¹é‡
+    readNum,       // è¯»å–ç‰©å“æ•°é‡
+    readWeight,    // è¯»å–ç‰©å“é‡é‡
+    readValue,     // è¯»å–ç‰©å“ä»·å€¼
+    writeM,        // å†™å…¥æœ€ä¼˜è§£çŸ©é˜µ
+    readM,         // è¯»å–æœ€ä¼˜è§£çŸ©é˜µ
+    calM,          // è®¡ç®—æœ€ä¼˜è§£çŸ©é˜µ
+    cmp,           // æ¯”è¾ƒæœ€ä¼˜è§£çŸ©é˜µ
+    ansM,          // è¯»å–æœ€ä¼˜è§£å¹¶å†™å…¥è§£å‘é‡
+    cmpAnsM,       // æ¯”è¾ƒè§£å‘é‡å’Œæœ€ä¼˜è§£çŸ©é˜µ
+    writeAns,      // å†™å…¥è§£å‘é‡
     readAns,
-    success        // ³É¹¦Íê³ÉÄ£Äâ
+    success        // æˆåŠŸå®Œæˆæ¨¡æ‹Ÿ
 };
-// ×Ô¶¯»ú×´Ì¬×ªÒÆº¯Êı
+// è‡ªåŠ¨æœºçŠ¶æ€è½¬ç§»å‡½æ•°
 State transition(State currentState, int tape[], int& head, int& tapePos, int& memoryPos, int& memorySize) {
     switch (currentState) {
-    case readCapacity:  // ¶ÁÈ¡±³°üÈİÁ¿
+    case readCapacity:  // è¯»å–èƒŒåŒ…å®¹é‡
         capacity = tape[head];
         j = capacity;
         head++;
         return readNum;
-    case readNum:       // ¶ÁÈ¡ÎïÆ·ÊıÁ¿
+    case readNum:       // è¯»å–ç‰©å“æ•°é‡
         num = tape[head];
         num0 = num;
         head++;
         tapePos = head+num * 2;
-        head = tapePos - 2;// Ìø¹ıÖØÁ¿µÄ´æ´¢Î»ÖÃ
+        head = tapePos - 2;// è·³è¿‡é‡é‡çš„å­˜å‚¨ä½ç½®
         tapePos -= 2;
         return readWeight;
-    case readWeight:    // ¶ÁÈ¡ÎïÆ·ÖØÁ¿
+    case readWeight:    // è¯»å–ç‰©å“é‡é‡
         weight[num - 1] = tape[head];
         head++;
         return readValue;
-    case readValue:     // ¶ÁÈ¡ÎïÆ·¼ÛÖµ
+    case readValue:     // è¯»å–ç‰©å“ä»·å€¼
         value[num - 1] = tape[head];
-        head--;  // »ØÍËµ½ÉÏÒ»¸öÎïÆ·µÄÖØÁ¿Î»ÖÃ
+        head--;  // å›é€€åˆ°ä¸Šä¸€ä¸ªç‰©å“çš„é‡é‡ä½ç½®
         return writeM;
-    case writeM:        // Ğ´Èë×îÓÅ½â¾ØÕó
-        if (memoryPos == capacity + 1) {  // Èç¹ûÒÑ¾­ÌîÂúÁË×îÓÅ½â¾ØÕó
+    case writeM:        // å†™å…¥æœ€ä¼˜è§£çŸ©é˜µ
+        if (memoryPos == capacity + 1) {  // å¦‚æœå·²ç»å¡«æ»¡äº†æœ€ä¼˜è§£çŸ©é˜µ
             tapePos -= 2;
-            head = tapePos;  // »Øµ½ÏÂÒ»¸öÎïÆ·µÄÖØÁ¿Î»ÖÃ
+            head = tapePos;  // å›åˆ°ä¸‹ä¸€ä¸ªç‰©å“çš„é‡é‡ä½ç½®
             memoryPos = 0;
             num--;
             
-            if (num == 0) {  // Èç¹ûÒÑ¾­´¦ÀíÍêËùÓĞÎïÆ·½øÈëĞ´½âÏòÁ¿½×¶Î
+            if (num == 0) {  // å¦‚æœå·²ç»å¤„ç†å®Œæ‰€æœ‰ç‰©å“è¿›å…¥å†™è§£å‘é‡é˜¶æ®µ
                 head += 2;
                 return readM;
             }
             else return readWeight;
         }
        
-        if (num == 0) {  // Èç¹ûÒÑ¾­´¦ÀíÍêËùÓĞÎïÆ·
+        if (num == 0) {  // å¦‚æœå·²ç»å¤„ç†å®Œæ‰€æœ‰ç‰©å“
             return success;
         }
-        if (num < num0&&readx==-1)// ½«µ±Ç°ÎïÆ·µÄ¼ÛÖµĞ´Èë×îÓÅ½â¾ØÕó
+        if (num < num0&&readx==-1)// å°†å½“å‰ç‰©å“çš„ä»·å€¼å†™å…¥æœ€ä¼˜è§£çŸ©é˜µ
 
         {
             
             
             return readM;
         }
-        if (num < num0 && readx != -1)//readÖ®ºó
+        if (num < num0 && readx != -1)//readä¹‹å
         {
             if (memoryPos < weight[num - 1])
             {
@@ -113,14 +113,14 @@ State transition(State currentState, int tape[], int& head, int& tapePos, int& m
         memoryPos++; writetapeindex++;
        
         return writeM;
-    case readM:         // ¶ÁÈ¡×îÓÅ½â¾ØÕó
-        if (memoryPos == capacity + 1) {  // Èç¹ûÒÑ¾­ÌîÂúÁË×îÓÅ½â¾ØÕó
-            head = tapePos;  // »Øµ½ÏÂÒ»¸öÎïÆ·µÄÖØÁ¿Î»ÖÃ
+    case readM:         // è¯»å–æœ€ä¼˜è§£çŸ©é˜µ
+        if (memoryPos == capacity + 1) {  // å¦‚æœå·²ç»å¡«æ»¡äº†æœ€ä¼˜è§£çŸ©é˜µ
+            head = tapePos;  // å›åˆ°ä¸‹ä¸€ä¸ªç‰©å“çš„é‡é‡ä½ç½®
             memoryPos = 0;
             num--;
             return readWeight;
         }
-        if (num == 0) {  // Èç¹ûÒÑ¾­´¦ÀíÍêËùÓĞÎïÆ·
+        if (num == 0) {  // å¦‚æœå·²ç»å¤„ç†å®Œæ‰€æœ‰ç‰©å“
             readx = tape[head];
             head += 2;
             return ansM;
@@ -132,42 +132,42 @@ State transition(State currentState, int tape[], int& head, int& tapePos, int& m
 
         //}
         //else     M[num][memoryPos] = value[num - 1];
-        //head = tapePos + (num - 1) * (capacity + 1) + memoryPos - 1;  // Ìø×ªµ½ÏÂÒ»¸öÎïÆ·µÄ×îÓÅ½â¾ØÕóÎ»ÖÃ
+        //head = tapePos + (num - 1) * (capacity + 1) + memoryPos - 1;  // è·³è½¬åˆ°ä¸‹ä¸€ä¸ªç‰©å“çš„æœ€ä¼˜è§£çŸ©é˜µä½ç½®
         return writeM;
-    case calM:          // ¼ÆËã×îÓÅ½â¾ØÕó
+    case calM:          // è®¡ç®—æœ€ä¼˜è§£çŸ©é˜µ
         
 
-            temp = M[num+1][memoryPos-weight[num-1]] + value[num - 1];  // ¼ÆËã×°Èëµ±Ç°ÎïÆ·µÄ¼ÛÖµ
-            //Ğ´ÈëworkÖ½´ø
+            temp = M[num+1][memoryPos-weight[num-1]] + value[num - 1];  // è®¡ç®—è£…å…¥å½“å‰ç‰©å“çš„ä»·å€¼
+            //å†™å…¥workçº¸å¸¦
         ifcla=true;
-        head += capacity + 1;  // Ìø×ªµ½ÏÂÒ»¸öÎ»ÖÃ
+        head += capacity + 1;  // è·³è½¬åˆ°ä¸‹ä¸€ä¸ªä½ç½®
         return cmp;
-    case cmp:           // ±È½Ï×îÓÅ½â¾ØÕó
+    case cmp:           // æ¯”è¾ƒæœ€ä¼˜è§£çŸ©é˜µ
         
-        if (temp > M[num +1][memoryPos]) {  // Èç¹û×°Èëµ±Ç°ÎïÆ·¸üÓÅ
-            return writeM;  // Ö±½ÓĞ´Èë×îÓÅ½â¾ØÕó
+        if (temp > M[num +1][memoryPos]) {  // å¦‚æœè£…å…¥å½“å‰ç‰©å“æ›´ä¼˜
+            return writeM;  // ç›´æ¥å†™å…¥æœ€ä¼˜è§£çŸ©é˜µ
         }
-        else {  // ·ñÔò²»×°Èëµ±Ç°ÎïÆ·
+        else {  // å¦åˆ™ä¸è£…å…¥å½“å‰ç‰©å“
             temp = M[num + 1][memoryPos];
-            return writeM;  // Ö±½Ó¶ÁÈ¡ÏÂÒ»¸öÎ»ÖÃµÄ×îÓÅ½â¾ØÕó
+            return writeM;  // ç›´æ¥è¯»å–ä¸‹ä¸€ä¸ªä½ç½®çš„æœ€ä¼˜è§£çŸ©é˜µ
         }
-    case ansM:          // ¶ÁÈ¡×îÓÅ½â²¢Ğ´Èë½âÏòÁ¿
-        //ans[memoryPos] = num;  // ½«µ±Ç°ÎïÆ·±àºÅĞ´Èë½âÏòÁ¿
+    case ansM:          // è¯»å–æœ€ä¼˜è§£å¹¶å†™å…¥è§£å‘é‡
+        //ans[memoryPos] = num;  // å°†å½“å‰ç‰©å“ç¼–å·å†™å…¥è§£å‘é‡
         //memoryPos++;
         return cmpAnsM;
-    case cmpAnsM:       // ±È½Ï½âÏòÁ¿ºÍ×îÓÅ½â¾ØÕó
-        if (M[i][j] == M[i+1][j]) {  // Èç¹û²»×°Èëµ±Ç°ÎïÆ·¸üÓÅ
+    case cmpAnsM:       // æ¯”è¾ƒè§£å‘é‡å’Œæœ€ä¼˜è§£çŸ©é˜µ
+        if (M[i][j] == M[i+1][j]) {  // å¦‚æœä¸è£…å…¥å½“å‰ç‰©å“æ›´ä¼˜
             
             memoryPos++; i++;
             write_anstapeindex++;
-            return readM;  // Ğ´Èë½âÏòÁ¿
+            return readM;  // å†™å…¥è§£å‘é‡
         }
-        else {  // ·ñÔò×°Èëµ±Ç°ÎïÆ·
+        else {  // å¦åˆ™è£…å…¥å½“å‰ç‰©å“
             ans0 = 1;
-            return writeAns;  // ¼ÌĞøÑ°ÕÒÏÂÒ»¸öÎ»ÖÃµÄ½âÏòÁ¿
+            return writeAns;  // ç»§ç»­å¯»æ‰¾ä¸‹ä¸€ä¸ªä½ç½®çš„è§£å‘é‡
         }
-    case writeAns:      // Ğ´Èë½âÏòÁ¿
-        ans[memoryPos] = ans0;  // ½«ÉÏÒ»¸öÎïÆ·±àºÅĞ´Èë½âÏòÁ¿
+    case writeAns:      // å†™å…¥è§£å‘é‡
+        ans[memoryPos] = ans0;  // å°†ä¸Šä¸€ä¸ªç‰©å“ç¼–å·å†™å…¥è§£å‘é‡
         ans0 = 0;
         memoryPos++;
         j -= readx;
@@ -176,69 +176,69 @@ State transition(State currentState, int tape[], int& head, int& tapePos, int& m
         if (j == 0)
             return success;
         else return readM;
-    case readAns:       // ¶ÁÈ¡½âÏòÁ¿
+    case readAns:       // è¯»å–è§£å‘é‡
         return success;
     default:
         return success;
     }
 }
 int main() {
-    int tape[] = { 5, 4, 2, 12, 1, 10, 3, 20, 2, 15 };  // Ê¾ÀıÊäÈëÖ½´ø
-    int head = 0;  // ¶ÁĞ´Í·Î»ÖÃ
-    int tapePos = 0;  // Ö½´øÎ»ÖÃ
-    int memoryPos = 0;  // ÄÚ´æÎ»ÖÃ
-    int memorySize = 10;  // ÄÚ´æ´óĞ¡
-    State currentState = readCapacity;  // ³õÊ¼×´Ì¬
+    int tape[] = { 5, 4, 2, 12, 1, 10, 3, 20, 2, 15 };  // ç¤ºä¾‹è¾“å…¥çº¸å¸¦
+    int head = 0;  // è¯»å†™å¤´ä½ç½®
+    int tapePos = 0;  // çº¸å¸¦ä½ç½®
+    int memoryPos = 0;  // å†…å­˜ä½ç½®
+    int memorySize = 10;  // å†…å­˜å¤§å°
+    State currentState = readCapacity;  // åˆå§‹çŠ¶æ€
     while (currentState != success) {
         cout << "|----------------------------------------|" << endl;
-        cout << "|      µ±Ç°×´Ì¬Îª£º" << state[currentState] << "          |" << endl;
+        cout << "|      å½“å‰çŠ¶æ€ä¸ºï¼š" << state[currentState] << "          |" << endl;
         cout << "|----------------------------------------|" << endl;
         cout << endl << endl << endl << endl;
 
         cout << "|----------------------------------------|" << endl;
         if (currentState == readCapacity|| currentState == readNum|| currentState == readValue|| currentState == readWeight)
         {
-            cout << "¶ÁÍ·Î»ÖÃÎªÊäÈëÖ½´øµÄ£º" << tape[head] << "Î»ÖÃ£º" << head << endl;
+            cout << "è¯»å¤´ä½ç½®ä¸ºè¾“å…¥çº¸å¸¦çš„ï¼š" << tape[head] << "ä½ç½®ï¼š" << head << endl;
         }
 
         if (currentState == writeM)
         {
-            cout << "Ğ´Í·Î»ÖÃÎª¹¤×÷Ö½´øµÄ£º"  << "Î»ÖÃ£º" << writetapeindex << endl;
+            cout << "å†™å¤´ä½ç½®ä¸ºå·¥ä½œçº¸å¸¦çš„ï¼š"  << "ä½ç½®ï¼š" << writetapeindex << endl;
         }
 
         if (currentState == readM)
         {
-            cout << "¶ÁÍ·Î»ÖÃÎª¹¤×÷Ö½´øµÄ£º" << "Î»ÖÃ£º" << (writetapeindex)-6 << endl;
+            cout << "è¯»å¤´ä½ç½®ä¸ºå·¥ä½œçº¸å¸¦çš„ï¼š" << "ä½ç½®ï¼š" << (writetapeindex)-6 << endl;
         }
 
         if (currentState == calM)
         {
-            cout << "¶ÁÍ·Î»ÖÃÎª¹¤×÷Ö½´øµÄ£º" << "Î»ÖÃ£º" <<(3-num)*6+ memoryPos - weight[num - 1] << endl;
+            cout << "è¯»å¤´ä½ç½®ä¸ºå·¥ä½œçº¸å¸¦çš„ï¼š" << "ä½ç½®ï¼š" <<(3-num)*6+ memoryPos - weight[num - 1] << endl;
         }
         
 
         if (currentState == cmp)
         {
-            cout << "Ğ´Í·Î»ÖÃÎª¹¤×÷Ö½´øµÄ£º" << "Î»ÖÃ£º" << cmpx<< endl;
+            cout << "å†™å¤´ä½ç½®ä¸ºå·¥ä½œçº¸å¸¦çš„ï¼š" << "ä½ç½®ï¼š" << cmpx<< endl;
         }
 
         if (currentState == ansM)
         {
-            cout << "¶ÁÍ·Î»ÖÃÎª¹¤×÷Ö½´øµÄ£º" << "Î»ÖÃ£º" << "("<<i<<","<<j <<")" << endl;
+            cout << "è¯»å¤´ä½ç½®ä¸ºå·¥ä½œçº¸å¸¦çš„ï¼š" << "ä½ç½®ï¼š" << "("<<i<<","<<j <<")" << endl;
         }
 
         if (currentState == cmpAnsM)
         {
-            cout << "¶ÁÍ·Î»ÖÃÎª¹¤×÷Ö½´øµÄ£º" << "Î»ÖÃ£º" << "(" << i+1 << "," << j << ")" << endl;
+            cout << "è¯»å¤´ä½ç½®ä¸ºå·¥ä½œçº¸å¸¦çš„ï¼š" << "ä½ç½®ï¼š" << "(" << i+1 << "," << j << ")" << endl;
         }
 
         if (currentState == writeAns)
         {
-            cout << "¶ÁÍ·Î»ÖÃÎªÊä³öÖ½´øµÄ£º" << "Î»ÖÃ£º" << write_anstapeindex << endl;
+            cout << "è¯»å¤´ä½ç½®ä¸ºè¾“å‡ºçº¸å¸¦çš„ï¼š" << "ä½ç½®ï¼š" << write_anstapeindex << endl;
         }
         cout << "|----------------------------------------|" << endl;
         cout << endl << endl << endl;
-        cout << "¶şÎ¬±í£º"<<endl;
+        cout << "äºŒç»´è¡¨ï¼š"<<endl;
         for (int a = 1; a <= 4; a++)
         {
             for (int b = 0; b < 6; b++)
@@ -248,7 +248,7 @@ int main() {
             }
             cout << endl;
         }
-        cout << endl << "¹¤×÷Ö½´ø£º";
+        cout << endl << "å·¥ä½œçº¸å¸¦ï¼š";
         for (int a = 4; a >= num; a--)
         {
             for (int b = 0; b < 6; b++)
@@ -264,13 +264,13 @@ int main() {
             cout << temp;
            
         }
-        cout << endl << "Êä³öÖ½´ø£º";
+        cout << endl << "è¾“å‡ºçº¸å¸¦ï¼š";
         for (int a=0;a<num0;a++)
         {
             cout << ans[a] << " ";
         }
 
-        cout << endl << "step£º" << step++<<"        "<<"grids"<<writetapeindex+40-cmpx<<endl;
+        cout << endl << "stepï¼š" << step++<<"        "<<"grids"<<writetapeindex+40-cmpx<<endl;
         currentState = transition(currentState, tape, head, tapePos, memoryPos, memorySize);
         
         system("pause");
@@ -279,16 +279,15 @@ int main() {
         if (currentState == success)
         {
             cout << "|----------------------------------------|" << endl;
-            cout << "|µ±Ç°×´Ì¬Îª£º" << state[currentState] << "--------------------------|" << endl;
+            cout << "|å½“å‰çŠ¶æ€ä¸ºï¼š" << state[currentState] << "--------------------------|" << endl;
             cout << "|-----------------------------------------|" << endl;
             cout << endl << endl << endl << endl;
         }
     }
-    cout << "½âÏòÁ¿Îª£º";
+    cout << "è§£å‘é‡ä¸ºï¼š";
     for (int i = 0; i < num0; i++) {
         cout << ans[i] << " ";
     }
     cout << endl;
     return 0;
 }
-
