@@ -57,6 +57,7 @@ def solve(i, remaining_capacity, current_stack_depth):
 
 # 计算结果
 max_value = solve(n - 1, capacity, 0)
+# st.text(stack_snapshots)  # 调试
 
 # 添加剩余的出栈操作
 for i in range(n):
@@ -64,7 +65,7 @@ for i in range(n):
         if dp[i][cap] != -1:
             stack_snapshots.append((i, cap, 0, 'pop'))
 
-# 初始化 session_state
+# 初始化 session_state 的step来控制栈显示
 if 'step' not in st.session_state:
     st.session_state.step = 0
 
@@ -85,19 +86,20 @@ if st.button('重新开始'):
     st.session_state.step = 0
 
 # 确保步骤不超过快照数
-st.session_state.step = min(st.session_state.step, len(dp_snapshots) - 1)
+st.session_state.step = min(st.session_state.step, max(len(dp_snapshots) - 1, len(stack_snapshots) - 1))
 
 # 显示当前步骤的 DP 表格状态
-if st.session_state.step < len(dp_snapshots):
-    step = st.session_state.step
-    st.subheader(f'Step {step + 1}: DP 表格状态')
+if st.session_state.step < max(len(dp_snapshots), len(stack_snapshots)):
+    DPstep = min(st.session_state.step, len(dp_snapshots) - 1)
+    step = min(st.session_state.step, len(stack_snapshots) - 1)
+    st.subheader(f'DP 表格状态')
     dp_table = ''
-    for row in dp_snapshots[step]:
+    for row in dp_snapshots[DPstep]:
         dp_table += str(row) + '\n'
     st.text(dp_table)
-    
+    # st.text(step)     # 调试
     # 显示栈状态
-    st.subheader(f'Step {step + 1}: 栈状态')
+    st.subheader(f'栈状态')
     current_stack = []
     for i in range(step + 1):
         if stack_snapshots[i][3] == 'push':
@@ -114,5 +116,5 @@ if st.session_state.step < len(dp_snapshots):
         ax.text(5, depth, f'Depth {len(current_stack) - depth - 1}: (i: {i}, cap: {cap})', 
                 ha='center', va='center', fontsize=12, bbox=dict(facecolor='lightblue', edgecolor='black', boxstyle='round,pad=0.5'))
 
-    ax.set_title('栈变化过程')
+    # ax.set_title('栈变化过程')
     st.pyplot(fig)
