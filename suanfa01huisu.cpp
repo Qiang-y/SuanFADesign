@@ -1,4 +1,4 @@
-﻿
+
 ///*
 #include <cstdlib> 
 #include <iostream>
@@ -49,11 +49,30 @@ int knapsack_recursive(int W, const vector<int>& w, const vector<int>& v, int n,
 }
 
 int main() {
-    int W = 50; // 背包的最大承载重量
-    vector<int> w = { 10, 20, 30 }; // 物品的重量
-    vector<int> v = { 60, 100, 120 }; // 物品的价值
-    int n = w.size(); // 物品的数量
+    int W; // 背包的最大承载重量
+    cout << "输入capacity：" << endl;
+    cin >> W;
+    int n;// 物品的数量
+    cout << "输入n：" << endl;
+    cin >> n;
 
+
+    vector<int> w;// 物品的重量
+	vector<int> v;// 物品的价值
+	cout << "输入weight：" << endl;
+	int a=0;
+	for (int i = 0; i < n; i++)
+	{
+		cin >> a;
+		w.push_back(a);
+	}
+    cout << "输入profit：" << endl;
+    int b = 0;
+    for (int i = 0; i < n; i++)
+    {
+        cin >> b;
+        v.push_back(b);
+    }
     int steps = 0;
     int maxDepth = 0;
     int result = knapsack_recursive(W, w, v, n, steps, maxDepth, 1,stk);
