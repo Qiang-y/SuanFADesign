@@ -2,12 +2,13 @@
 #include<cstdlib>
 #include <iostream>
 #include <cstring>
+#include<vector>
 using namespace std;
-int capacity, num,num0;  // 背包容量和物品数量
-int readx=-1;//read的值
+int capacity, num, num0;  // 背包容量和物品数量
+int readx = -1;//read的值
 int j = 0, i = 1;
-int ans0= 0;
-int writetape[40] = { -1 }; int writetapeindex = 0; int cmpx = 39;
+int ans0 = 0;
+int writetape[400] = { -1 }; int writetapeindex = 0; int cmpx = 399;
 int write_anstape[40]; int write_anstapeindex = 0;
 int step = 0;
 int temp = 0;//clam值
@@ -46,7 +47,7 @@ State transition(State currentState, int tape[], int& head, int& tapePos, int& m
         num = tape[head];
         num0 = num;
         head++;
-        tapePos = head+num * 2;
+        tapePos = head + num * 2;
         head = tapePos - 2;// 跳过重量的存储位置
         tapePos -= 2;
         return readWeight;
@@ -64,22 +65,22 @@ State transition(State currentState, int tape[], int& head, int& tapePos, int& m
             head = tapePos;  // 回到下一个物品的重量位置
             memoryPos = 0;
             num--;
-            
+
             if (num == 0) {  // 如果已经处理完所有物品进入写解向量阶段
                 head += 2;
                 return readM;
             }
             else return readWeight;
         }
-       
+
         if (num == 0) {  // 如果已经处理完所有物品
             return success;
         }
-        if (num < num0&&readx==-1)// 将当前物品的价值写入最优解矩阵
+        if (num < num0 && readx == -1)// 将当前物品的价值写入最优解矩阵
 
         {
-            
-            
+
+
             return readM;
         }
         if (num < num0 && readx != -1)//read之后
@@ -93,25 +94,25 @@ State transition(State currentState, int tape[], int& head, int& tapePos, int& m
             {
                 if (ifcla)
                 {
-                    
+
                     M[num][memoryPos] = temp;
                     ifcla = false;
                     readx = -1;
-                    
+
                 }
                 else
                 {
-                    
+
                     return calM;
                 }
             }
-            
+
         }
-        else  if (memoryPos < weight[num-1])M[num][memoryPos] = 0;
-        else  M[num][memoryPos] = value[num-1];
-        
+        else  if (memoryPos < weight[num - 1])M[num][memoryPos] = 0;
+        else  M[num][memoryPos] = value[num - 1];
+
         memoryPos++; writetapeindex++;
-       
+
         return writeM;
     case readM:         // 读取最优解矩阵
         if (memoryPos == capacity + 1) {  // 如果已经填满了最优解矩阵
@@ -135,16 +136,16 @@ State transition(State currentState, int tape[], int& head, int& tapePos, int& m
         //head = tapePos + (num - 1) * (capacity + 1) + memoryPos - 1;  // 跳转到下一个物品的最优解矩阵位置
         return writeM;
     case calM:          // 计算最优解矩阵
-        
 
-            temp = M[num+1][memoryPos-weight[num-1]] + value[num - 1];  // 计算装入当前物品的价值
-            //写入work纸带
-        ifcla=true;
+
+        temp = M[num + 1][memoryPos - weight[num - 1]] + value[num - 1];  // 计算装入当前物品的价值
+        //写入work纸带
+        ifcla = true;
         head += capacity + 1;  // 跳转到下一个位置
         return cmp;
     case cmp:           // 比较最优解矩阵
-        
-        if (temp > M[num +1][memoryPos]) {  // 如果装入当前物品更优
+
+        if (temp > M[num + 1][memoryPos]) {  // 如果装入当前物品更优
             return writeM;  // 直接写入最优解矩阵
         }
         else {  // 否则不装入当前物品
@@ -156,8 +157,8 @@ State transition(State currentState, int tape[], int& head, int& tapePos, int& m
         //memoryPos++;
         return cmpAnsM;
     case cmpAnsM:       // 比较解向量和最优解矩阵
-        if (M[i][j] == M[i+1][j]) {  // 如果不装入当前物品更优
-            
+        if (M[i][j] == M[i + 1][j]) {  // 如果不装入当前物品更优
+
             memoryPos++; i++;
             write_anstapeindex++;
             return readM;  // 写入解向量
@@ -183,7 +184,17 @@ State transition(State currentState, int tape[], int& head, int& tapePos, int& m
     }
 }
 int main() {
-    int tape[] = { 5, 4, 2, 12, 1, 10, 3, 20, 2, 15 };  // 示例输入纸带
+    cout << "请输入背包容量:" << endl;
+    int tape[20]; int Capacity, n;
+    cin >> Capacity;
+    cout << "请输入物品数量:" << endl;
+    cin >> n;
+    tape[0] = Capacity, tape[1] = n;
+    cout << "请输入weight value tape:" << endl;
+    for (int k = 2; k < 2 * n + 2; k++)
+    {
+        cin >> tape[k];
+    }
     int head = 0;  // 读写头位置
     int tapePos = 0;  // 纸带位置
     int memoryPos = 0;  // 内存位置
@@ -196,14 +207,14 @@ int main() {
         cout << endl << endl << endl << endl;
 
         cout << "|----------------------------------------|" << endl;
-        if (currentState == readCapacity|| currentState == readNum|| currentState == readValue|| currentState == readWeight)
+        if (currentState == readCapacity || currentState == readNum || currentState == readValue || currentState == readWeight)
         {
             cout << "读头位置为输入纸带的：" << tape[head] << "位置：" << head << endl;
         }
 
         if (currentState == writeM)
         {
-            cout << "写头位置为工作纸带的："  << "位置：" << writetapeindex << endl;
+            cout << "写头位置为工作纸带的：" << "位置：" << writetapeindex << endl;
         }
 
         if (currentState == readM)
@@ -213,23 +224,23 @@ int main() {
 
         if (currentState == calM)
         {
-            cout << "读头位置为工作纸带的：" << "位置：" <<(3-num)*6+ memoryPos - weight[num - 1] << endl;
+            cout << "读头位置为工作纸带的：" << "位置：" << (3 - num) * 6 + memoryPos - weight[num - 1] << endl;
         }
-        
+
 
         if (currentState == cmp)
         {
-            cout << "写头位置为工作纸带的：" << "位置：" << cmpx<< endl;
+            cout << "写头位置为工作纸带的：" << "位置：" << cmpx << endl;
         }
 
         if (currentState == ansM)
         {
-            cout << "读头位置为工作纸带的：" << "位置：" << "("<<i<<","<<j <<")" << endl;
+            cout << "读头位置为工作纸带的：" << "位置：" << "(" << i << "," << j << ")" << endl;
         }
 
         if (currentState == cmpAnsM)
         {
-            cout << "读头位置为工作纸带的：" << "位置：" << "(" << i+1 << "," << j << ")" << endl;
+            cout << "读头位置为工作纸带的：" << "位置：" << "(" << i + 1 << "," << j << ")" << endl;
         }
 
         if (currentState == writeAns)
@@ -238,10 +249,10 @@ int main() {
         }
         cout << "|----------------------------------------|" << endl;
         cout << endl << endl << endl;
-        cout << "二维表："<<endl;
-        for (int a = 1; a <= 4; a++)
+        cout << "二维表：" << endl;
+        for (int a = 1; a <= 5; a++)
         {
-            for (int b = 0; b < 6; b++)
+            for (int b = 0; b < capacity + 1; b++)
 
             {
                 cout << M[a][b] << " ";
@@ -249,30 +260,30 @@ int main() {
             cout << endl;
         }
         cout << endl << "工作纸带：";
-        for (int a = 4; a >= num; a--)
+        for (int a = num0; a >= num; a--)
         {
-            for (int b = 0; b < 6; b++)
+            for (int b = 0; b < capacity + 1; b++)
 
             {
-                
+
                 cout << M[a][b] << " ";
             }
-           
+
         }
         if (temp != 0)
         {
             cout << temp;
-           
+
         }
         cout << endl << "输出纸带：";
-        for (int a=0;a<num0;a++)
+        for (int a = 0; a < num0; a++)
         {
             cout << ans[a] << " ";
         }
 
-        cout << endl << "step：" << step++<<"        "<<"grids"<<writetapeindex+40-cmpx<<endl;
+        cout << endl << "step：" << step++ << "        " << "grids" << writetapeindex + 400 - cmpx << endl;
         currentState = transition(currentState, tape, head, tapePos, memoryPos, memorySize);
-        
+
         system("pause");
         system("cls");
 
@@ -291,3 +302,4 @@ int main() {
     cout << endl;
     return 0;
 }
+
