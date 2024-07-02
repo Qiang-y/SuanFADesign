@@ -248,6 +248,7 @@ void TuringMachine::initHeap(){
     i = 1;
     E = NULL;
     up = Bound(1);
+    work_ptr = 0;
     AddliveNode();
     return;
 }
@@ -255,7 +256,7 @@ void TuringMachine::initHeap(){
 void TuringMachine::AddliveNode(){
     cur_state = "AddliveNode";
     if(i != n+1){
-        next_state = "AddliveNode";
+        next_state = "deleteNode";
         display();
         std::vector<int>().swap(work_tape); //清空work_tape中的内容
         int wt = cw + obj[i].weight;
@@ -269,13 +270,7 @@ void TuringMachine::AddliveNode(){
             AddAliveNode(q, E, up, cw, cp, i, 0);
         }
         convert(q, work_tape);
-        E = q.top();
-        q.pop();
-        cw = E->weight;
-        cp = E->profit;
-        up = E->upprofit;
-        i = E->lev;
-        AddliveNode();
+       deleteNode();
     }
     else{
         next_state = "storeResult";
@@ -287,6 +282,21 @@ void TuringMachine::AddliveNode(){
         storeResult();
     }
     return;
+}
+
+void TuringMachine::deleteNode(){
+    cur_state = "deleteNode";
+    next_state = "AddliveNode";
+    display();
+    std::vector<int>().swap(work_tape); //清空work_tape中的内容
+    E = q.top();
+    q.pop();
+    convert(q, work_tape);
+    cw = E->weight;
+    cp = E->profit;
+    up = E->upprofit;
+    i = E->lev;
+    AddliveNode();
 }
 
 void TuringMachine::storeResult(){

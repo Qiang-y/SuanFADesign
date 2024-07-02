@@ -22,6 +22,7 @@ public:
     void preprocess();
     void initHeap();
     void AddliveNode();
+    void deleteNode();
     void storeResult();
 private:
     std::string cur_state, next_state;  //图灵机当前状态和下一状态
