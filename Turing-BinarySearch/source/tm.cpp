@@ -14,7 +14,7 @@ TuringMachine :: TuringMachine(std::vector<int> input){
 }
 
 void TuringMachine::display(){
-    system("clear");
+    system("cls");
     std::string direction = (dirc == 0) ? "L" : "R";
     std::cout << "steps: " << steps++ << std::endl;
     std::cout << "grids: " << work_tape.size() << std::endl;

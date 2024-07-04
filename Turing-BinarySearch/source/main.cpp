@@ -9,17 +9,17 @@ int main()
     std::cin >> a >> b;
     input.push_back(a);
     input.push_back(b);
-    system("clear");
+    system("cls");
     std::cout << "key: ";
     std::cin >> a;
-    system("clear");
+    system("cls");
     input.push_back(a);
     std::cout << "Array: ";
     for(int i = 0; i < input[1] + 1; ++i){
         std::cin >> a;
         input.push_back(a);
     }
-    system("clear");
+    system("cls");
     TuringMachine tm{input};
 
     return 0;
