@@ -121,7 +121,7 @@ class AutoMachine:
                     self.stop_8()
                 case 9:
                     self.return_9(stack_frames)
-            # time.sleep(0.5)
+            time.sleep(0.5)
         return self.output
 
 
@@ -179,8 +179,8 @@ workPaperLen = 0
 st.title("二分查找仿真演示")
 
 # 用户输入
-arr = st.text_input("查找列表：", "1,2,3,4,5")
-target = st.number_input("目标值：", min_value=1)
+arr = st.text_input("查找列表：", "0,1,2,3,4,6,7,8,9,10")
+target = st.number_input("目标值：", value=5)
 
 # 将用户输入转换为列表
 arr = list(map(int, arr.split(',')))

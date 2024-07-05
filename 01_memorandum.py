@@ -6,10 +6,13 @@ import matplotlib.pyplot as plt
 # values = [3, 4, 5, 6]
 # capacity = 5
 
+# 标题
+st.title('01 背包问题 - 备忘录法仿真')
+
 # 用户输入
-weights = st.text_input("物品重量：", "2,3,4,5")
-values = st.text_input("物品价值：", "3,4,5,6")
-capacity = st.number_input("背包容量：", min_value=1)
+weights = st.text_input("物品重量：", "5,15,25,27,30")
+values = st.text_input("物品价值：", "12,30,44,46,50")
+capacity = st.number_input("背包容量：", min_value=50)
 
 # 将输入转化为数组
 weights = list(map(int, weights.split(',')))
@@ -71,7 +74,6 @@ if 'step' not in st.session_state:
     st.session_state.step = 0
 
 # Streamlit 页面显示
-st.title('01 背包问题 - 备忘录法仿真')
 # st.write('物品重量:', weights)
 # st.write('物品价值:', values)
 # st.write('背包容量:', capacity)
